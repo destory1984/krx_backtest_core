@@ -46,6 +46,15 @@ def _members(url: str, col: str) -> pd.DataFrame:
     raise RuntimeError(f"no member table with column {col!r} at {url}")
 
 
+def _quote_type(symbol: str) -> str:
+    """EQUITY / ETF / ... from Yahoo, "" when unknown."""
+    import yfinance as yf
+    try:
+        return str(yf.Ticker(symbol).info.get("quoteType") or "")
+    except Exception:
+        return ""
+
+
 def build_universe(ddir: Path) -> pd.DataFrame:
     rows = []
     for group, (url, col) in WIKI.items():
@@ -64,6 +73,10 @@ def build_universe(ddir: Path) -> pd.DataFrame:
     uni = df.groupby("ticker").agg(name=("name", lambda s: max(s, key=len)),
                                    groups=("group", lambda s: ",".join(sorted(set(s))))).reset_index()
     uni["snapshot"] = pd.Timestamp.today().normalize()
+    uni["type"] = "EQUITY"  # index members are stocks; ask Yahoo only for the watchlist
+    for i in uni.index[uni["groups"] == "watch"]:
+        uni.loc[i, "type"] = _quote_type(uni.loc[i, "ticker"])
+        time.sleep(1.0)
     uni.to_parquet(ddir / "universe.parquet", index=False)
     print(f"universe: {len(uni)} tickers")
     return uni
