@@ -47,6 +47,22 @@ python -m krxbt.fetch                 # config.yaml 의 data·universe 설정을
 python -m krxbt.fetch --config path/to/config.yaml
 ```
 
+## 미국 주식 데이터 (`krxbt.fetch_us`)
+
+야후(`yfinance`)에서 일봉을 받아 `../us_data` 에 한국 데이터와 같은 모양으로 둔다. 아직 수집만 하고, 매매 계산(`frame`·`engine`)은 한국 규칙(가격 제한 ±30% 등)에 맞춰져 있어 미국 데이터에는 쓰지 않는다.
+
+```
+python -m krxbt.fetch_us --dir ../us_data     # 처음 받기와 갱신 모두. 129종목에 약 3분
+```
+
+- 종목: 지금의 나스닥100(101개, GOOG·GOOGL 둘 다) + 다우30 + `us_data/watchlist.txt` 에 한 줄씩 적은 종목. 목록은 위키백과 표에서 읽는다. 관심 종목 파일은 저장소에 올리지 않는다.
+- 지수: `index_NDX`, `index_DJI`, `index_SPX` (2007-01-03 부터).
+- 가격: `open`·`high`·`low`·`close` 는 액면분할만 반영한 값이고, `adj_close` 는 배당까지 반영한 값이다.
+  특별배당이 큰 종목은 `close` 로 보면 가짜 급락이 나온다. 예: KDP 2018-07-10 에 주당 103달러 특별배당으로 `close` 가 -82% 인데 `adj_close` 로는 +11% 다.
+- **생존편향이 있다.** 지금 지수에 든 종목만 받으므로, 그동안 지수에서 빠지거나 망한 종목은 없다. 폭락 매수 같은 규칙은 실제보다 좋게 나온다.
+- 2007년부터 있는 종목은 129개 중 90개다. 나머지는 늦게 상장했다(TSLA 2010, META 2012, ARM 2023 등).
+- 거래량 0 인 날이 많은 종목: FER 2,478일(2024년 미국 상장 전에는 장외 시세), POET 708일(나스닥 이전 전 장외 시세). 이 기간은 거래정지처럼 걸러야 한다.
+
 ## 새 알고리즘 만들기
 
 config.yaml 에 `data`, `universe`, `indicators`, `rules`, `costs` 가 있어야 한다. `bnf_backtest/config.yaml` 을 복사해서 시작하면 된다.
