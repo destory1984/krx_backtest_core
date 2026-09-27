@@ -17,7 +17,7 @@
 알고리즘 저장소의 `requirements.txt` 에 버전을 박아서 설치한다. 엔진을 고쳐도 옛 알고리즘의 결과가 바뀌지 않게 하려는 것이다.
 
 ```
-krxbt @ git+https://github.com/destory1984/krx_backtest_core@v0.1.0
+krxbt @ git+https://github.com/destory1984/krx_backtest_core@v0.2.0
 ```
 
 엔진을 같이 고치는 중이면 로컬 폴더를 편집 가능 모드로 설치한다.
@@ -88,4 +88,5 @@ trades = trades[~trades["data_break"]]   # 시세 끊김을 끼고 들고 있던
 
 ## 버전
 
+- v0.2.0 (2026-09-27): 미국 주식 수집(`krxbt.fetch_us`)과 미국용 종목표(`krxbt.us`, 배당 반영 가격, 가격 제한 없음). 한국 쪽 계산은 그대로다.
 - v0.1.0 (2026-09-27): bnf_backtest 에서 떼어 냄. 익절 조건을 "종가 ≥ 25일선" 고정에서 알고리즘이 넘기는 배열로 바꿨다. 결과 숫자는 떼기 전과 같다.
