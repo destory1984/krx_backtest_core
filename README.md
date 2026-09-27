@@ -29,15 +29,7 @@ pip install -e ../krx_backtest_core
 ## 데이터 폴더
 
 시세는 어느 저장소에도 넣지 않는다. 크기가 약 260MB 이고, 네이버 시세를 다시 배포하는 일이 되기 때문이다.
-알고리즘 저장소 옆에 `krx_data` 폴더를 두고 모든 알고리즘이 그것을 같이 읽는다.
-
-```
-작업 폴더/
-  krx_data/              시세 (prices/*.parquet, index_*.parquet, universe.parquet)
-  krx_backtest_core/     이 저장소
-  bnf_backtest/          알고리즘 1
-  다른_알고리즘/         알고리즘 2
-```
+데이터 폴더 하나를 모든 알고리즘이 같이 읽는다. 안에는 `prices/*.parquet`, `index_*.parquet`, `universe.parquet` 가 있다.
 
 폴더 위치는 환경변수 `KRX_DATA_DIR` 가 있으면 그것을 쓰고, 없으면 config 의 `data.dir` 을 config 파일 기준 상대 경로로 읽는다(`../krx_data`).
 
